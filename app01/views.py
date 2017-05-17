@@ -162,26 +162,26 @@ def crontabview(request):
                 if request.POST['action'] == "create":
                     print request.POST['action']
                     if request.POST['backup'] == "True":
-                        part = ["ansible ", each["name"], " -m cron -a ", "'", 'backup="True"', "name=", '"', request.POST['name'], '"', request.POST['time'], " job=", '"', request.POST['job'], '"', "'", " -u ", each["auth_user"]]
+                        part = ["ansible ", each["name"], " -m cron -a ", "'", 'backup="True"', " name=", '"', request.POST['name'], '"', " ", request.POST['time'], " job=", '"', request.POST['job'], '"', "'", " -u ", each["auth_user"]]
                         cmd = ''.join(part)
                         print cmd
 			run_cmd = commands.getoutput(cmd)
 			result.append(str(run_cmd))
                     else:
-                        part = ["ansible ", each["name"], " -m cron -a ", '"', "name=", request.POST['name'], request.POST['time'], " job=", request.POST['time'], request.POST['job'], '"', " -u ", each["auth_user"]]
+                        part = ["ansible ", each["name"], " -m cron -a ", "'", "name=", '"', request.POST['name'], '"', " ", request.POST['time'], " job=", '"', request.POST['job'], '"', "'", " -u ", each["auth_user"]]
                         cmd = ''.join(part)
                         print cmd
 			run_cmd = commands.getoutput(cmd)
 			result.append(str(run_cmd))
                 else:
                     if request.POST['backup'] == "True":
-                        part = ["ansible ", each["name"], " -m cron -a ", '"', 'backup="True"', " name=", request.POST['name'], " state=absent", '"', " -u ", each["auth_user"]]
+                        part = ["ansible ", each["name"], " -m cron -a ", "'", 'backup="True"', " name=", '"', request.POST['name'],'"', " state=absent", "'", " -u ", each["auth_user"]]
                         cmd = ''.join(part)
                         print cmd
 			run_cmd = commands.getoutput(cmd)
 			result.append(str(run_cmd))
                     else:
-                        part = ["ansible ", each["name"], " -m cron -a ", '"', "name=", request.POST['name'], " state=absent", '"', " -u ", each["auth_user"]]
+                        part = ["ansible ", each["name"], " -m cron -a ", "'", "name=", '"', request.POST['name'], '"', " state=absent", "'", " -u ", each["auth_user"]]
                         cmd = ''.join(part)
                         print cmd
 			run_cmd = commands.getoutput(cmd)

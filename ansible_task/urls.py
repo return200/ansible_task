@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^software/$', views.softwareview),
     url(r'^service/$', views.serviceview),
     url(r'^crontab/$', views.crontabview),
+    url(r'^cluster/', xadmin.site.urls),
 ]
