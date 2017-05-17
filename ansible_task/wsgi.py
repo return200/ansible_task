@@ -1,16 +1,14 @@
-"""
-WSGI config for ansible_task project.
+import os, sys
+# add the hellodjango project path into the sys.path
+sys.path.append('/usr/local/lib/python2.7/site-packages')
+sys.path.append('/usr/local/ansible_task')
 
-It exposes the WSGI callable as a module-level variable named ``application``.
+# add the virtualenv site-packages path to the sys.path
+#sys.path.append('<PATH_TO_VIRTUALENV>/Lib/site-packages')
 
-For more information on this file, see
-https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/
-"""
-
-import os
-
-from django.core.wsgi import get_wsgi_application
-
+# poiting to the project settings
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ansible_task.settings")
 
+from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
+
