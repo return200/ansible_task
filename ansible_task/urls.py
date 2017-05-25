@@ -17,9 +17,11 @@ from django.conf.urls import url
 from django.contrib import admin
 from app01 import views
 
+import xadmin
+
 urlpatterns = [
     url(r'^$', views.defaultview),
-    url(r'^admin/', admin.site.urls),
+    url(r'^admin/', xadmin.site.urls),
     url(r'^file/$', views.fileview),
     url(r'^shell/$', views.shellview),
     url(r'^copy/$', views.copyview),

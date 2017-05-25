@@ -3,6 +3,8 @@
 
 {% block content_title %}计划任务{% endblock %}
 
+{% include 'script.html' %}
+
 {% block content %}
 <div class="margin">
     <form action="/crontab/" method="post">
@@ -15,7 +17,11 @@
 			{% endfor %}
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
-		
+
+		任务名称:&nbsp;
+		<input type="text" name="name">
+		&nbsp;&nbsp;&nbsp;&nbsp;
+				
 		动作:&nbsp;
 		<select id="action" name="action" onchange="content()">
 			<option value="create">创建</option>
@@ -23,10 +29,9 @@
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		
-		任务名称:&nbsp;
-		<input type="text" name="name">
-		&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="submit" value="提交">
 		
+		<br/>
 		备份:&nbsp;
 		<select name="backup">
 			<option value="True">是</option>
@@ -34,9 +39,6 @@
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		
-		<input type="submit" value="提交">
-		
-		<br /><br />
 		<span id="content">
 		执行时间:&nbsp;
 		<input type="text" name="time">
@@ -45,8 +47,7 @@
 		任务内容:&nbsp;
 		<input type="text" name="job">
 		&nbsp;&nbsp;&nbsp;&nbsp;
-		</span>
-        
+		</span>    
     </form>
 {% include 'result.html' %}
 </div>
