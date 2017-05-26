@@ -1,0 +1,13 @@
+<SCRIPT language=javascript>
+	function content(){
+		var a=document.getElementById("action").value;
+		if (a=="delete"){
+			b=document.getElementById("content");
+			b.setAttribute("hidden", true);
+		}
+		else{
+			b=document.getElementById("content");
+			b.removeAttribute("hidden", true);
+		}
+	}
+</SCRIPT>

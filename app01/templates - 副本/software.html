@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}软件管理{% endblock %}
+
+{% block content %}
+<div class="margin">
+    <form action="/software/" method="post">
+        {% csrf_token %}
+        
+		组别:&nbsp;
+        <select name="group">
+			{% for group in groups %}
+			<option value="{{ group }}">{{ group }}</option> 
+			{% endfor %}
+		</select>
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		
+		方法:&nbsp;
+        <select name="method">
+			<option value="yum">yum</option> 
+			<option value="apt-get">apt-get</option> 
+		</select>
+		&nbsp;&nbsp;&nbsp;&nbsp;
+        
+		软件名称:&nbsp;<input type="text" name="name" placeholder="多个软件用英文逗号分开">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        
+		动作:&nbsp;
+        <select name="action">
+			<option value="installed">安装</option> 
+			<option value="removed">卸载</option> 
+		</select>
+		&nbsp;&nbsp;&nbsp;&nbsp;
+        
+        <input type="submit" value="提交">
+    </form>
+{% include 'result.html' %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,28 @@
+<SCRIPT language=javascript>
+	function expand(el)
+	{
+		childObj = document.getElementById("child" + el);
+
+		if (childObj.style.display == 'none')
+		{
+			childObj.style.display = 'block';
+		}
+		else
+		{
+			childObj.style.display = 'none';
+		}
+		return;
+	}
+	
+	function content(){
+		var a=document.getElementById("action").value;
+		if (a=="delete"){
+			b=document.getElementById("content");
+			b.setAttribute("hidden", true);
+		}
+		else{
+			b=document.getElementById("content");
+			b.removeAttribute("hidden", true);
+		}
+	}
+</SCRIPT>

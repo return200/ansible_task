@@ -1,0 +1,15 @@
+eclipse.preferences.version=1
+encoding//ansible_task/urls.py=UTF-8
+encoding//app01/apps.py=utf8
+encoding//app01/models.py=utf-8
+encoding//app01/views.py=utf-8
+encoding//templates/base.html=UTF-8
+encoding//templates/copy.html=UTF-8
+encoding//templates/crontab.html=UTF-8
+encoding//templates/file.html=UTF-8
+encoding//templates/nav.html=UTF-8
+encoding//templates/service.html=UTF-8
+encoding//templates/shell.html=UTF-8
+encoding//templates/software.html=UTF-8
+encoding//xadmin/adminx.py=utf-8
+encoding//xadmin/migrations/0003_auto_20160715_0100.py=utf-8
