@@ -9,7 +9,7 @@ django-formtools 2.0
 django-crispy-forms 1.6.1  
 ```
 
-2017-5-26  
+2017-5-26  
 linux下调整运行  
 
 2017-5-25  
