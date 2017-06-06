@@ -216,7 +216,60 @@
 			b.removeAttribute("hidden", true);
 		}
 	}
-        
+
+//检查input是否为空：file copy shell service software crontab
+	function file(){
+		if (document.getElementById("dest").value==""){
+			alert("请输入目标对象！")
+			return false;
+		}
+		return true;
+	}
+
+	function copy(){
+		if (document.getElementById("file").value==""){
+			alert("请上传文件！")
+			return false;
+		}
+		if (document.getElementById("dest").value==""){
+			alert("请输入目标路径！")
+			return false;
+		}		
+		return true;
+	}
+	
+	function shell(){
+		if (document.getElementById("cmd").value==""){
+			alert("请输入命令内容！")
+			return false;
+		}
+		return true;
+	}
+
+	function service(){
+		if (document.getElementById("name").value==""){
+			alert("请输入服务名称！")
+			return false;
+		}
+		return true;
+	}
+
+	function software(){
+		if (document.getElementById("name").value==""){
+			alert("请输入软件名称！")
+			return false;
+		}
+		return true;
+	}
+
+	function crontab(){
+		if (document.getElementById("name").value==""){
+			alert("请输入任务名称！")
+			return false;
+		}
+		return true;
+	}
+
     </script>
     <!-- END JAVASCRIPTS -->
 </body>

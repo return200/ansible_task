@@ -17,7 +17,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
         
 		目标对象:&nbsp;
-		<input type="text" name="dest" placeholder="需要操作的文件或目录">
+		<input type="text" id="dest" name="dest" placeholder="需要操作的文件或目录">
         &nbsp;&nbsp;&nbsp;&nbsp;
         
 		<br/>
@@ -34,7 +34,7 @@
 		<input type="text" name="params" placeholder="如：owner=root mode=755">
 		&nbsp;&nbsp;&nbsp;&nbsp;
         
-        <input type="submit" value="提交">
+        <input type="submit" onclick="return file()" value="提交">
     </form>
 {% include 'result.html' %}
 </div>
