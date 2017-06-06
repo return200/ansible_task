@@ -14,12 +14,11 @@
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		
-		命令内容:&nbsp;<input type="text" name="cmd">
+		命令内容:&nbsp;<input type="text" id="cmd" name="cmd">
         &nbsp;&nbsp;&nbsp;&nbsp;
         
-        <input type="submit" value="提交">
+        <input type="submit" onclick="return shell()" value="提交">
     </form>
 {% include 'result.html' %}
 </div>
 {% endblock %}
-
