@@ -8,6 +8,8 @@ django 1.10.0
 django-formtools 2.0
 django-crispy-forms 1.6.1  
 ```
+2017-6-16  
+增加一键部署（result乱码问题待解决）  
 
 2017-5-26  
 linux下调试运行  
