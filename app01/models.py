@@ -33,5 +33,16 @@ class Host(models.Model):
         verbose_name = '主机管理'
         verbose_name_plural = '主机管理'
 
+class Task(models.Model):
+    name = models.CharField(max_length=10, blank=False, null=False, verbose_name=u'任务描述')
+    host = CharField(max_length=21485, blank=False, null=False, verbose_name=u'任务主机')
+    result = models.TextField(blank=False, null=False, verbose_name=u'执行结果')
+
+    def __unicode__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name = '任务管理'
+        verbose_name_plural = '任务管理'
 #class Copy(models.Model):
 #    file = models.FileField(upload_to='file')

@@ -4,7 +4,7 @@ from models import UserSettings, Log
 from xadmin.layout import *
 from xadmin import views
 
-from app01.models import Group, Host
+from app01.models import Group, Host, Task
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 
@@ -18,6 +18,11 @@ class HostAdmin(object):
     search_fields = ('name',)
 
 xadmin.site.register(Host, HostAdmin)
+
+class TaskAdmin(object):
+    list_display = ('name', 'host', 'result')
+
+xadmin.site.register(Task, TaskAdmin)
 
 class GlobalSetting(object):
     site_title = "ansible平台"

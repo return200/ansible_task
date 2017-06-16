@@ -30,4 +30,6 @@ urlpatterns = [
     url(r'^crontab/$', views.crontabview),
     url(r'^cluster/', xadmin.site.urls),
     url(r'^onekey/$', views.onekeyview),
+	url(r'^runcmd/$', views.runcmdview),
+    url(r'^getcmd/(.*)/$', views.getcmdview, name="task"),
 ]
