@@ -256,8 +256,8 @@ def runcmdview(request):
     date = time.strftime("%Y%m%d%H%M%S", time.localtime())
     groups = Group.objects.all()
     cmd = ''
-    result = []
-    hosts = []
+    result = ''
+    host = ''
     status = "ok"
     if request.POST:
         task = request.POST['task']
@@ -265,10 +265,9 @@ def runcmdview(request):
         file = request.POST['file']
         file_dir = file.split("/")[-1].split(".")[0]   #jar包名目录,win下用\\表示目录级别，linux下用/表示。
 #         file_name = file_dir+".war" #jar包名
+       
         
-        print file
-        
-#        Task.objects.create(name=task)  #任务名写入数据库
+        Task.objects.create(name=task)  #任务名写入数据库
         
         queryset = Host.objects.filter(group_id=group).values('name','auth_user')   #列出host和auth_user
         
@@ -276,21 +275,23 @@ def runcmdview(request):
             return HttpResponse('no hosts found!')
         else:
             for each in queryset:
-                result.append("\n>>>>"+each['name'])
-                hosts.append(each['name'])
+                result = result+">>>>"+each['name']
+                host = host+each['name']+" "
                 cmds = collections.OrderedDict()
-                cmds[u'\b\b\b\b\n[stop tomcat]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps aux |grep /usr/local/jre/bin/java |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -u "+each['auth_user']
-                cmds[u'\n\n[backup dir]'] = "ansible "+each['name']+" -m shell -a "+'"'+"cp -r /mnt/tomcat/webapps/"+file_dir+" /mnt/tomcat/backup/"+file_dir+"-"+date+'"'+" -u "+each['auth_user']
-                cmds[u'\n\n[delete dir]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+" state=absent"+'"'+" -u "+each['auth_user']
-                cmds[u'\n\n[send jar package]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src="+file+" dest=/mnt/tomcat/webapps/"+'"'+" -u "+each['auth_user']
-                cmds[u'\n\n[start tomcat]'] = "ansible "+each['name']+" -m service -a "+'"'+"name=tomcat state=started"+'"'+" -u "+each['auth_user']
+                cmds[u'\n[ 停止tomcat服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps aux |grep /usr/local/jre/bin/java |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -u "+each['auth_user']
+                cmds[u'\n\n[ 备份项目目录 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"cp -r /mnt/tomcat/webapps/"+file_dir+" /mnt/tomcat/backup/"+file_dir+"-"+date+'"'+" -u "+each['auth_user']
+                cmds[u'\n\n[ 删除项目目录 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+" state=absent"+'"'+" -u "+each['auth_user']
+                cmds[u'\n\n[ 分发jar包 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src="+file+" dest=/mnt/tomcat/webapps/"+'"'+" -u "+each['auth_user']
+                cmds[u'\n\n[ 启动tomcat服务 ]'] = "ansible "+each['name']+" -m service -a "+'"'+"name=tomcat state=started"+'"'+" -u "+each['auth_user']
 		for cmd in cmds:
-		    print cmd, "###", cmds[cmd]
+		    print cmd, "###", cmds[cmd]	#cmd:步骤名称，cmds[cmd]:命令内容
 		    run_cmd = commands.getoutput(cmds[cmd])
                     run_result = "%s\n%s" % (cmd,run_cmd)
-		    result.append(str(run_result))
-#		Task.objects.filter(name=task).create(host=hosts, result=result) #主机，任务执行结果存入对应任务名称下
-		Task.objects.create(name=task, host=hosts, result=result)
+		    result+=run_result
+		result+='\n\n'
+		print result
+		Task.objects.filter(name=task).update(host=host, result=result) #主机，任务执行结果存入对应任务名称下
+#		Task.objects.create(name=task, host=hosts, result=result)
 		
     return HttpResponse(status)
 	
@@ -303,14 +304,15 @@ def getcmdview(request,task):
     print queryset
     
     for each in queryset:
-#         unicode转码中文
-        foo = each['result']
-        print foo
-        bar = foo[7:len(foo)]
-        rlt = bar.decode('unicode-escape').encode('utf-8')
-        result.append(rlt)
-    print result
-#         转码结束
+	result.append(each['result'])
+##         unicode转码中文
+#        foo = each['result']
+#        print foo
+#        bar = foo[7:len(foo)]
+#        rlt = bar.decode('unicode-escape').encode('utf-8')
+#        result.append(rlt)
+#	 print result
+##         转码结束
     return HttpResponse(result)
 	
 	
