@@ -135,10 +135,18 @@
                         <span class="title">软件管理</span>
                     </a>
                 </li>
+				<!--
 				<li>
                     <a href="/crontab/">
                         <i class="icon-calendar"></i>
                         <span class="title">计划任务</span>
+                    </a>
+                </li>
+				-->
+				<li>
+                    <a href="/onekey/">
+                        <i class="icon-cogs"></i>
+                        <span class="title">一键部署</span>
                     </a>
                 </li>
 				<li>
@@ -269,7 +277,17 @@
 		}
 		return true;
 	}
-
+	
+	function submitit(){
+		if(document.getElementById("task").value==""){
+			alert("请输入任务描述！")
+			return false;
+		}
+		else if(document.getElementById("file").value==""){
+			alert("请上传文件!")
+			return false;
+		}
+	}
     </script>
     <!-- END JAVASCRIPTS -->
 </body>
