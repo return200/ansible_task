@@ -23,7 +23,7 @@ class Group(models.Model):
 
 class Host(models.Model):
     name = models.GenericIPAddressField(unique=True, max_length=255, blank=False, null=False, verbose_name=u'主机地址')
-    group = models.ForeignKey(Group, blank=False, null=False, to_field='name', verbose_name=u'组名')
+    group = models.CharField(max_length=20, blank=False, null=False, verbose_name=u'组别')
     auth_user = models.CharField(max_length=10, blank=False, null=False, default="root", verbose_name=u'认证用户')
     
     def __unicode__(self):

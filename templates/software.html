@@ -9,7 +9,8 @@
         {% csrf_token %}
         
 		组别:&nbsp;
-        <select name="group">
+        <select name="group" required>
+			<option></option>
 			{% for group in groups %}
 			<option value="{{ group }}">{{ group }}</option> 
 			{% endfor %}
@@ -17,7 +18,8 @@
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		
 		操作方法:&nbsp;
-        <select name="method">
+        <select name="method" required>
+			<option></option>
 			<option value="yum">yum</option> 
 			<option value="apt">apt-get</option> 
 		</select>
@@ -26,17 +28,18 @@
         <br/>
         
 		动作:&nbsp;
-        <select name="action">
+        <select name="action" required>
+			<option></option>
 			<option value="installed">安装</option> 
 			<option value="removed">卸载</option> 
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
         
 		软件名称:&nbsp;
-		<input type="text" id="name" name="name" placeholder="多个软件用英文逗号分开">
+		<input type="text" id="name" name="name" placeholder="多个软件用英文逗号分开" required />
         &nbsp;&nbsp;&nbsp;&nbsp;
              
-        <input type="submit" onclick="return software()" value="提交">
+        <input type="submit" value="提交">
     </form>
 {% include 'result.html' %}
 </div>

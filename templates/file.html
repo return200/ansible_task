@@ -9,7 +9,8 @@
         {% csrf_token %}
         
 		组别:&nbsp;
-        <select name="group">
+        <select name="group" required>
+			<option></option>
 			{% for group in groups %}
 			<option value ="{{ group }}">{{ group }}</option> 
 			{% endfor %}
@@ -17,12 +18,13 @@
         &nbsp;&nbsp;&nbsp;&nbsp;
         
 		目标对象:&nbsp;
-		<input type="text" id="dest" name="dest" placeholder="需要操作的文件或目录">
+		<input type="text" id="dest" name="dest" placeholder="需要操作的文件或目录" required />
         &nbsp;&nbsp;&nbsp;&nbsp;
         
 		<br/>
 		动作:&nbsp;
-        <select name="action">
+        <select name="action" required />
+			<option></option>
 			<option value="touch">新建文件</option>
 			<option value="directory">新建目录</option>
 			<option value="absent">删除文件/目录</option>
@@ -31,10 +33,10 @@
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		
 		其他参数:&nbsp;
-		<input type="text" name="params" placeholder="如：owner=root mode=755">
+		<input type="text" name="params" placeholder="如：owner=root mode=755" />
 		&nbsp;&nbsp;&nbsp;&nbsp;
         
-        <input type="submit" onclick="return file()" value="提交">
+        <input type="submit" value="提交">
     </form>
 {% include 'result.html' %}
 </div>

@@ -8,19 +8,20 @@
 <form enctype="multipart/form-data" action="/copy/" method="post">
 	{% csrf_token %}
 	组别:&nbsp;
-	<select name="group">  
+	<select name="group" required>
+		  <option></option>
 		{% for group in groups %}
 		  <option value ="{{ group }}">{{ group }}</option> 
 		{% endfor %}
 	</select>
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	
-	文件:&nbsp;<input type="file" id="file" name="file" />
+	文件:&nbsp;<input type="file" id="file" name="file" required />
 		
-	目标路径:&nbsp;<input type="text" id="dest" name="dest">
+	目标路径:&nbsp;<input type="text" id="dest" name="dest" required />
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	
-	<input type="submit" onclick="return copy()" value="提交"/>
+	<input type="submit" value="提交"/>
 </form>
 {% include 'result.html' %}
 </div>

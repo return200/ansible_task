@@ -11,7 +11,8 @@
         {% csrf_token %}
         
 		组别:&nbsp;
-        <select name="group">
+        <select name="group" required>
+			<option></option>
 			{% for group in groups %}
 			<option value="{{ group }}">{{ group }}</option> 
 			{% endfor %}
@@ -19,11 +20,12 @@
 		&nbsp;&nbsp;&nbsp;&nbsp;
 
 		任务名称:&nbsp;
-		<input type="text" id="name" name="name">
+		<input type="text" id="name" name="name" required />
 		&nbsp;&nbsp;&nbsp;&nbsp;
 				
 		任务动作:&nbsp;
-		<select id="action" name="action" onchange="content()">
+		<select id="action" name="action" onchange="content()" required>
+			<option></option>
 			<option value="create">创建</option>
 			<option value="delete">删除</option>
 		</select>
@@ -33,7 +35,8 @@
 		
 		<br/>
 		备份:&nbsp;
-		<select name="backup">
+		<select name="backup" required>
+			<option></option>
 			<option value="True">是</option>
 			<option value="False">否</option>
 		</select>
@@ -41,11 +44,11 @@
 		
 		<span id="content">
 		执行时间:&nbsp;
-		<input type="text" name="time">
+		<input type="text" name="time" required />
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		
 		任务内容:&nbsp;
-		<input type="text" name="job">
+		<input type="text" name="job" required />
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		</span>    
     </form>

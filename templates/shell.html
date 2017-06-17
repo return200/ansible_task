@@ -7,17 +7,18 @@
         {% csrf_token %}
         
  		组别:&nbsp;
-        <select name="group">
+        <select name="group" required>
+			<option></option>
 			{% for group in groups %}
 			<option value="{{ group }}">{{ group }}</option> 
 			{% endfor %}
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		
-		命令内容:&nbsp;<input type="text" id="cmd" name="cmd">
+		命令内容:&nbsp;<input type="text" id="cmd" name="cmd" required />
         &nbsp;&nbsp;&nbsp;&nbsp;
         
-        <input type="submit" onclick="return shell()" value="提交">
+        <input type="submit" value="提交">
     </form>
 {% include 'result.html' %}
 </div>

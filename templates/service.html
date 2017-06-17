@@ -9,7 +9,8 @@
         {% csrf_token %}
         
 		组别:&nbsp;
-        <select name="group">
+        <select name="group" required>
+			<option></option>
 			{% for group in groups %}
 			<option value="{{ group }}">{{ group }}</option> 
 			{% endfor %}
@@ -17,22 +18,23 @@
 		&nbsp;&nbsp;&nbsp;&nbsp;
         
 		服务名称:&nbsp;
-		<input type="text" id="name" name="name" placeholder="">
+		<input type="text" id="name" name="name" placeholder="" required />
         &nbsp;&nbsp;&nbsp;&nbsp;
         
 		<br/>
 		动作:&nbsp;
-        <select name="action">
+        <select name="action" required>
+			<option></option>
 			<option value="started">启动</option> 
 			<option value="stopped">停止</option> 
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		
 		进程名称:&nbsp;
-        <input type="text" name="pattern" placeholder="如：/usr/bin/java">
+        <input type="text" name="pattern" placeholder="如：/usr/bin/java" />
         &nbsp;&nbsp;&nbsp;&nbsp;
 		
-        <input type="submit"onclick="return service()" value="提交">
+        <input type="submit" value="提交">
     </form>
 {% include 'result.html' %}
 </div>

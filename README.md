@@ -8,6 +8,9 @@ django 1.10.0
 django-formtools 2.0
 django-crispy-forms 1.6.1  
 ```
+2016-6-20  
+替换了节点管理部分  
+
 2017-6-19  
 解决了result乱码问题
 ```
