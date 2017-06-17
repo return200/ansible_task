@@ -20,8 +20,11 @@ from app01 import views
 import xadmin
 
 urlpatterns = [
-    url(r'^$', views.defaultview),
-    url(r'^admin/', xadmin.site.urls),
+	url(r'^$', views.dashbordview),
+    url(r'^login/$', views.loginview),
+    url(r'^logout/$', views.logoutview),
+    url(r'^dashbord/$', views.dashbordview),
+    url(r'^adminn/', xadmin.site.urls),
     url(r'^file/$', views.fileview),
     url(r'^shell/$', views.shellview),
     url(r'^copy/$', views.copyview),

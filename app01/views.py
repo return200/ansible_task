@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 import commands, os, sys, time
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, redirect
 from django.http.response import HttpResponse, HttpResponseRedirect
 from app01.models import Group, Host, Task
 import collections
+from django.contrib.auth.decorators import login_required
+from django.contrib import auth
+from django.contrib.auth import authenticate, login, logout
 
 # Create your views here.
 
 #file
+@login_required
 def fileview(request):
     groups = Group.objects.all()
     cmd = ''
@@ -41,6 +45,7 @@ def fileview(request):
     return render(request, "file.html", {'result': result, 'groups': groups})
 
 #copy
+@login_required
 def copyview(request):
     groups = Group.objects.all()
     cmd = ''
@@ -73,6 +78,7 @@ def copyview(request):
     return render(request, "copy.html", {'result': result, 'groups': groups})
 
 #shell
+@login_required
 def shellview(request):
     groups = Group.objects.all()
     cmd = ''
@@ -94,6 +100,7 @@ def shellview(request):
     return render(request, "shell.html", {'result': result, 'groups': groups})
 
 #software
+@login_required
 def softwareview(request):
     groups = Group.objects.all()
     cmd = ''
@@ -119,6 +126,7 @@ def softwareview(request):
     return render(request, "software.html", {'result': result, 'groups': groups})
 
 #service
+@login_required
 def serviceview(request):
     groups = Group.objects.all()
     cmd = ''
@@ -147,11 +155,13 @@ def serviceview(request):
     return render(request, "service.html", {'result': result, 'groups': groups})
 
 #返回访问的页面-->页面添加任务，通过ajax实现不刷新页面执行命令（runcmdview）-->同样通过ajax获取命令执行结果(getcmdview)
+@login_required
 def onekeyview(request):
     groups = Group.objects.all()
     return render(request, "onekey.html", {'groups': groups})
 
-#执行命令	
+#执行命令
+@login_required
 def runcmdview(request):
     date = time.strftime("%Y%m%d%H%M%S", time.localtime())
     groups = Group.objects.all()
@@ -191,6 +201,7 @@ def runcmdview(request):
     return HttpResponse(status)
 
 #获取任务运行结果
+@login_required
 def getcmdview(request,task):
     result = []
     queryset = Task.objects.filter(name=task).values('result')  #任务执行结果
@@ -202,6 +213,7 @@ def getcmdview(request,task):
     return HttpResponse(result)
 
 #节点管理：group
+@login_required
 def groupview(request):  
     name = ''
     comment = ''
@@ -217,6 +229,7 @@ def groupview(request):
     return render(request, 'group.html', {'groups': groups})
 
 #删除组
+@login_required
 def delgroup(request):
     if request.POST:
         name = request.POST['name']
@@ -225,6 +238,7 @@ def delgroup(request):
     return HttpResponseRedirect("/group/")
 
 #节点管理：host
+@login_required
 def hostview(request):
     groups = Group.objects.all()
     name = ''
@@ -242,6 +256,7 @@ def hostview(request):
     return render(request, 'host.html', {'groups': groups, 'hosts': hosts})
 
 #删除主机
+@login_required
 def delhost(request):
     if request.POST:
         name = request.POST['name']
@@ -250,6 +265,7 @@ def delhost(request):
     return HttpResponseRedirect("/host/")
 
 #检查任务名称是否重复
+@login_required
 def chkduplicate(request):
     status = ''
     print request.POST['check']
@@ -259,6 +275,38 @@ def chkduplicate(request):
         status = "unique"
     return HttpResponse(status)	
 
-#default
-def defaultview(request):
+#首页
+@login_required
+def dashbordview(request):
     return render_to_response("base.html")
+
+#登录
+def loginview(request):
+    if request.method == 'GET':
+        return render(request, 'login.html')
+    if request.method == 'POST':
+#     username = ''
+#     password = ''
+#     user = ''
+        if request.POST:
+            username = request.POST['user']
+            password = request.POST['passw0rd']
+            error = ''
+            print username, password
+            user = auth.authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                url = request.POST.get('source_url','/dashbord/')
+                return redirect(url)
+            else:
+                return render(request, 'login.html', {'error':"用户名或密码错误"})
+        else:
+            return render(request, 'login.html', {'error':"用户名或密码错误"})
+#注销
+@login_required
+def logoutview(request):
+    auth.logout(request)
+    return HttpResponseRedirect("/")
+#index
+def indexview(request):
+    return render(request, "login.html")
