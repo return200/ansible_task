@@ -20,7 +20,7 @@ from app01 import views
 import xadmin
 
 urlpatterns = [
-	url(r'^$', views.dashbordview),
+    url(r'^$', views.dashbordview),
     url(r'^login/$', views.loginview),
     url(r'^logout/$', views.logoutview),
     url(r'^dashbord/$', views.dashbordview),
@@ -33,9 +33,9 @@ urlpatterns = [
     # url(r'^crontab/$', views.crontabview),
     url(r'^cluster/', xadmin.site.urls),
     url(r'^onekey/$', views.onekeyview),
-	url(r'^runcmd/$', views.runcmdview),
+    url(r'^runcmd/$', views.runcmdview),
     url(r'^getcmd/(.*)/$', views.getcmdview, name="task"),
-	url(r'^group/$', views.groupview),
+    url(r'^group/$', views.groupview),
     url(r'^delgroup/$', views.delgroup),
     url(r'^host/$', views.hostview),
     url(r'^delhost/$', views.delhost),

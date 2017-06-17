@@ -13,12 +13,18 @@ from django.contrib.auth import authenticate, login, logout
 #file
 @login_required
 def fileview(request):
-    groups = Group.objects.all()
     cmd = ''
     result = []
+    user = request.user.username
+    
+    if request.user.is_superuser:
+        groups = Group.objects.all()
+    else:
+        groups = Group.objects.filter(user=user)
+		
     if request.POST:
         key = request.POST['group']
-        queryset = Host.objects.filter(group=key).values('name','auth_user')
+        queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
         if not queryset:
             return HttpResponse('no hosts found!')
         else:
@@ -47,9 +53,15 @@ def fileview(request):
 #copy
 @login_required
 def copyview(request):
-    groups = Group.objects.all()
     cmd = ''
     result = []
+    user = request.user.username
+    
+    if request.user.is_superuser:
+        groups = Group.objects.all()
+    else:
+        groups = Group.objects.filter(user=user)
+		
     dir = "/mnt/upload/"    #win下路径要用\\代表目录级别，linux下则用/
     if not os.path.isdir(dir):
         os.makedirs(dir)
@@ -65,7 +77,7 @@ def copyview(request):
         print file_path
         
         key = request.POST['group']
-        queryset = Host.objects.filter(group=key).values('name','auth_user')
+        queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
         if not queryset:
             return HttpResponse('no hosts found!')
         else:
@@ -80,13 +92,18 @@ def copyview(request):
 #shell
 @login_required
 def shellview(request):
-    groups = Group.objects.all()
     cmd = ''
     result = []
+    user = request.user.username
+    
+    if request.user.is_superuser:
+        groups = Group.objects.all()
+    else:
+        groups = Group.objects.filter(user=user)
     
     if request.POST:
         key = request.POST['group']
-        queryset = Host.objects.filter(group=key).values('name','auth_user')
+        queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
         if not queryset:
             return HttpResponse('no hosts found!')
         else:
@@ -102,15 +119,20 @@ def shellview(request):
 #software
 @login_required
 def softwareview(request):
-    groups = Group.objects.all()
     cmd = ''
     result = []
+    user = request.user.username
+    
+    if request.user.is_superuser:
+        groups = Group.objects.all()
+    else:
+        groups = Group.objects.filter(user=user)
     
     if request.POST:
         software = request.POST['name']
         print "soft %s", software
         key = request.POST['group']
-        queryset = Host.objects.filter(group=key).values('name','auth_user')
+        queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
         if not queryset:
             return HttpResponse('no hosts found!')
         else:
@@ -128,13 +150,18 @@ def softwareview(request):
 #service
 @login_required
 def serviceview(request):
-    groups = Group.objects.all()
     cmd = ''
     result = []
+    user = request.user.username
+    
+    if request.user.is_superuser:
+        groups = Group.objects.all()
+    else:
+        groups = Group.objects.filter(user=user)
     
     if request.POST:
         key = request.POST['group']
-        queryset = Host.objects.filter(group=key).values('name','auth_user')
+        queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
         if not queryset:
             return HttpResponse('no hosts found!')
         else:
@@ -157,25 +184,36 @@ def serviceview(request):
 #返回访问的页面-->页面添加任务，通过ajax实现不刷新页面执行命令（runcmdview）-->同样通过ajax获取命令执行结果(getcmdview)
 @login_required
 def onekeyview(request):
-    groups = Group.objects.all()
+    user = request.user.username
+    
+    if request.user.is_superuser:
+        groups = Group.objects.all()
+    else:
+        groups = Group.objects.filter(user=user)
     return render(request, "onekey.html", {'groups': groups})
 
 #执行命令
 @login_required
 def runcmdview(request):
     date = time.strftime("%Y%m%d%H%M%S", time.localtime())
-    groups = Group.objects.all()
     cmd = ''
     result = ''
     host = ''
     status = "ok"
+    user = request.user.username
+
     if request.POST:
         task = request.POST['task']
         group = request.POST['group']
         file = request.POST['file']
         file_dir = file.split("/")[-1].split(".")[0]   #jar包名目录,win下用\\表示目录级别，linux下用/表示。       
-        Task.objects.create(name=task)  #任务名写入数据库
-        queryset = Host.objects.filter(group=group).values('name','auth_user')   #列出host和auth_user
+        Task.objects.create(name=task, user=user)  #任务名写入数据库
+        
+        if request.user.is_superuser:
+            queryset = Host.objects.filter(group=group).values('name','auth_user')   #超级用户列出所有host和auth_user
+        else:
+            queryset = Host.objects.filter(user=user).filter(group=group).values('name','auth_user')   #普通用户列出自己的host和auth_user
+        print "runcmdview queryset:", queryset
         
         if not queryset:
             return HttpResponse('no hosts found!')
@@ -189,23 +227,24 @@ def runcmdview(request):
                 cmds[u'\n\n[ 删除项目目录 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+" state=absent"+'"'+" -u "+each['auth_user']
                 cmds[u'\n\n[ 分发 jar 包 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src="+file+" dest=/mnt/tomcat/webapps/"+'"'+" -u "+each['auth_user']
                 cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m service -a "+'"'+"name=tomcat state=started"+'"'+" -u "+each['auth_user']
-		for cmd in cmds:
-		    print cmd, "###", cmds[cmd]	#cmd:步骤名称，cmds[cmd]:命令内容
-		    run_cmd = commands.getoutput(cmds[cmd])
+                for cmd in cmds:
+                    print "runcmdview cmd:%s ### cmds[cmd]:%s" % (cmd, cmds[cmd])   #cmd:步骤名称，cmds[cmd]:命令内容
+                    run_cmd = commands.getoutput(cmds[cmd])
                     run_result = "%s\n%s" % (cmd,run_cmd)
-		    result+=run_result
-		result+='\n\n'
-		print result
-		Task.objects.filter(name=task).update(host=host, result=result) #将主机和任务执行结果存入对应任务名称下
-		
+                    result+=run_result
+                result+='\n\n'
+                print "runcmdview result:", result
+            Task.objects.filter(user=user).filter(name=task).update(host=host, result=result) #将主机和任务执行结果存入对应任务名称下
+
     return HttpResponse(status)
 
 #获取任务运行结果
 @login_required
 def getcmdview(request,task):
     result = []
-    queryset = Task.objects.filter(name=task).values('result')  #任务执行结果
-    print queryset
+    user = request.user.username
+    queryset = Task.objects.filter(user=user).filter(name=task).values('result')  #任务执行结果
+    print "getcmdview queryset:", queryset
     
     for each in queryset:
 	result.append(each['result'])
@@ -217,59 +256,76 @@ def getcmdview(request,task):
 def groupview(request):  
     name = ''
     comment = ''
+    user = request.user.username
     
     if request.POST:
         name = request.POST['name']
         comment = request.POST['comment']
-        Group.objects.create(name=name,comment=comment)
+        Group.objects.create(name=name, comment=comment, user=user)
     
-    groups = Group.objects.all()
-    print groups
+    if request.user.is_superuser:
+        groups = Group.objects.all()
+    else:        
+        groups = Group.objects.filter(user=user)
+
+    print "groupview groups:", groups
+    print "groupview dir(request.user):", dir(request.user)
 	
     return render(request, 'group.html', {'groups': groups})
 
 #删除组
 @login_required
 def delgroup(request):
+    user = request.user.username
     if request.POST:
         name = request.POST['name']
-        print name
-        Group.objects.filter(name=name).delete()
+        print "delgroup name:", name
+        Group.objects.filter(user=user).filter(name=name).delete()
     return HttpResponseRedirect("/group/")
 
 #节点管理：host
 @login_required
 def hostview(request):
-    groups = Group.objects.all()
-    name = ''
-    group = ''
-    auth_user = ''
+    user = request.user.username
+    
+    if request.user.is_superuser:
+        groups = Group.objects.all()
+    else:
+        groups = Group.objects.filter(user=user)
     
     if request.POST:
         name = request.POST['name']
         group = request.POST['group']
         print group
         auth_user = request.POST['auth_user']
-        Host.objects.create(name=name, group=group, auth_user=auth_user)
-    hosts = Host.objects.all()
-    print hosts
+        print "hostview name:%s group:%s auth_user:%s" %(name, group, auth_user)
+        Host.objects.create(name=name, group=group, auth_user=auth_user, user=user)
+    
+    if request.user.is_superuser:
+        hosts = Host.objects.all()
+    else:        
+        hosts = Host.objects.filter(user=user)
+    
+	print "hostview hosts", hosts
     return render(request, 'host.html', {'groups': groups, 'hosts': hosts})
 
 #删除主机
 @login_required
 def delhost(request):
+    user = request.user.username
     if request.POST:
         name = request.POST['name']
         print name
-        Host.objects.filter(name=name).delete()
+        Host.objects.filter(user=user).filter(name=name).delete()
     return HttpResponseRedirect("/host/")
 
 #检查任务名称是否重复
 @login_required
 def chkduplicate(request):
     status = ''
-    print request.POST['check']
-    if Task.objects.filter(name=request.POST['check']):
+    user = request.user.username
+    print "chkduplicate request.POST['check']:", request.POST['check']
+    if Task.objects.filter(user=user).filter(name=request.POST['check']):
         status = "duplicate"
     else:
         status = "unique"
@@ -278,7 +334,8 @@ def chkduplicate(request):
 #首页
 @login_required
 def dashbordview(request):
-    return render_to_response("base.html")
+    print "dashbordview request.user.username:", request.user.username
+    return render(request, "base.html")
 
 #登录
 def loginview(request):
@@ -294,7 +351,7 @@ def loginview(request):
             error = ''
             print username, password
             user = auth.authenticate(username=username, password=password)
-            if user is not None:
+            if user is not None and user.is_active:
                 login(request, user)
                 url = request.POST.get('source_url','/dashbord/')
                 return redirect(url)
