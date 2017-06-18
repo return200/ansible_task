@@ -69,6 +69,7 @@
 		{% csrf_token %}
 		<p><input type="text" name="user" id="user" placeholder="用户名"></p>
 		<p><input type="password" name="passw0rd" id="pwd" placeholder="密码"></p>
+        <p><input type="hidden" name="next" value="{{ request.GET.next }}" /></p>
 		<p style="color:red">{{ error }}</p>
 		<p><input type="submit" id="submit" value="登录"></p>
 	</form>

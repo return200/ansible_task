@@ -391,13 +391,14 @@ def loginview(request):
         if request.POST:
             username = request.POST['user']
             password = request.POST['passw0rd']
+            url = request.POST.get('next')    #获取前台传的next值，如果没有则为/dashbord/
             error = ''
             print "loginview username:%s password:%s" %(username, password)
             user = auth.authenticate(username=username, password=password)
             if user is not None and user.is_active:
                 login(request, user)
-                url = request.POST.get('source_url','/dashbord/')
-                return redirect(url)
+                # url = request.POST.get('source_url','/dashbord/')
+                return HttpResponseRedirect(url or "/")
             else:
                 return render(request, 'login.html', {'error':"用户名或密码错误"})
         else:
