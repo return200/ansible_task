@@ -48,9 +48,9 @@
 <!-- active, success, warning, danger,  -->
     {% for host in hosts %}
     <tr id="{{ host.name }}">
-	  <td>{{ host.name }}</td>
-	  <td>{{ host.group }}</td>
-	  <td>{{ host.auth_user }}</td>
+	  <td id="{{ host.name }}">{{ host.name }}</td>
+	  <td id="{{ host.group }}">{{ host.group }}</td>
+	  <td id="{{ host.auth_user }}">{{ host.auth_user }}</td>
       <td><button type="button" class="close" onclick="delhost(this)">×</button></td>
       <td></td>
 	</tr>

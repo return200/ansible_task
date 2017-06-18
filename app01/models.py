@@ -11,7 +11,7 @@ sys.setdefaultencoding('utf-8')
 
 # Create your models here.
 class Group(models.Model):
-    name = models.CharField(unique=True, max_length=50, blank=False, null=False, verbose_name=u'组名')
+    name = models.CharField(max_length=50, blank=False, null=False, verbose_name=u'组名')
     comment = models.CharField(max_length=50, blank=True, null=True, verbose_name=u'备注')
     user = models.CharField(max_length=20, blank=False, null=False, verbose_name=u'操作用户')
 	

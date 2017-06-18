@@ -24,7 +24,11 @@ def fileview(request):
 		
     if request.POST:
         key = request.POST['group']
-        queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
+        if request.user.is_superuser:
+            queryset = Host.objects.filter(group=key).values('name','auth_user')
+        else:
+            queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
+            
         if not queryset:
             return HttpResponse('no hosts found!')
         else:
@@ -33,19 +37,19 @@ def fileview(request):
                     if request.POST['action']=="modify":
                         part = ["ansible ", each["name"], " -m file -a ", '"', "dest=", request.POST['dest'], " ", request.POST['params'], '"', " -u ", each["auth_user"]]
                         cmd = ''.join(part)
-                        print cmd
+                        print "fileview cmd:", cmd
 			run_cmd = commands.getoutput(cmd)
                         result.append(str(run_cmd))
                     else:
                         part = ["ansible ", each["name"], " -m file -a ", '"', "dest=", request.POST['dest'], " state=" , request.POST['action'], " ", request.POST['params'], '"', " -u ", each["auth_user"]]
                         cmd = ''.join(part)
-                        print cmd
+                        print "fileview cmd:", cmd
 			run_cmd = commands.getoutput(cmd)
                         result.append(str(run_cmd))
                 else:
                     part = ["ansible ", each["name"], " -m file -a ", '"', "dest=", request.POST['dest'], " state=" , request.POST['action'], '"', " -u ", each["auth_user"]]
                     cmd = ''.join(part)
-                    print cmd
+                    print "fileview cmd:", cmd
 		    run_cmd = commands.getoutput(cmd)
 		    result.append(str(run_cmd))
     return render(request, "file.html", {'result': result, 'groups': groups})
@@ -66,7 +70,7 @@ def copyview(request):
     if not os.path.isdir(dir):
         os.makedirs(dir)
     if request.POST:
-        myFile =request.FILES.get("file", None)    # 获取上传的文件，如果没有文件，则默认为None  
+        myFile = request.FILES.get("file", None)    # 获取上传的文件，如果没有文件，则默认为None  
         if not myFile:  
             return HttpResponse("no files for upload!")  
         destination = open(os.path.join(dir, myFile.name),'wb+')    # 打开特定的文件进行二进制的写操作  
@@ -74,17 +78,21 @@ def copyview(request):
             destination.write(chunk)  
         destination.close()
         file_path = dir + myFile.name
-        print file_path
-        
+        print "copyview file_path:", file_path
         key = request.POST['group']
-        queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
+        
+        if request.user.is_superuser:
+            queryset = Host.objects.filter(group=key).values('name','auth_user')
+        else:
+            queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
+            
         if not queryset:
             return HttpResponse('no hosts found!')
         else:
             for each in queryset:
                 part = ["ansible ", each["name"], " -m copy -a ", '"', "src=", file_path, " dest=", request.POST['dest'], '"', " -u ", each["auth_user"]]
                 cmd = ''.join(part)
-                print cmd
+                print "copyview cmd:",cmd
 		run_cmd = commands.getoutput(cmd)
 		result.append(str(run_cmd))
     return render(request, "copy.html", {'result': result, 'groups': groups})
@@ -103,15 +111,20 @@ def shellview(request):
     
     if request.POST:
         key = request.POST['group']
-        queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
+        
+        if request.user.is_superuser:
+            queryset = Host.objects.filter(group=key).values('name','auth_user')
+        else:
+            queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
+
         if not queryset:
             return HttpResponse('no hosts found!')
         else:
             for each in queryset:
-                print each
+                print "shellview each:", each
                 part = ["ansible ", each["name"], " -m shell -a ", '"', request.POST['cmd'], '"', " -u ", each["auth_user"]]
                 cmd = ''.join(part)
-                print cmd
+                print "shellview cmd:", cmd
 		run_cmd = commands.getoutput(cmd)
 		result.append(str(run_cmd))
     return render(request, "shell.html", {'result': result, 'groups': groups})
@@ -132,17 +145,22 @@ def softwareview(request):
         software = request.POST['name']
         print "soft %s", software
         key = request.POST['group']
-        queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
+        
+        if request.user.is_superuser:
+            queryset = Host.objects.filter(group=key).values('name','auth_user')
+        else:
+            queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
+
         if not queryset:
             return HttpResponse('no hosts found!')
         else:
             for each in queryset:
-                print each
+                print "softwareview each:", each
                 for every in software.split(','):
                     print every.strip()
                     part = ["ansible ", each["name"], " -m ", request.POST['method'], " -a ", '"', "name=", every.strip(), " state=", request.POST['action'], '"', " -u ", each["auth_user"]]
                     cmd = ''.join(part)
-                    print cmd
+                    print "softwareview cmd:", cmd
 		    run_cmd = commands.getoutput(cmd)
 		    result.append(str(run_cmd))
     return render(request, "software.html", {'result': result, 'groups': groups})
@@ -161,22 +179,27 @@ def serviceview(request):
     
     if request.POST:
         key = request.POST['group']
-        queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
+        
+        if request.user.is_superuser:
+            queryset = Host.objects.filter(group=key).values('name','auth_user')
+        else:
+            queryset = Host.objects.filter(user=user).filter(group=key).values('name','auth_user')
+
         if not queryset:
             return HttpResponse('no hosts found!')
         else:
             for each in queryset:
-                print each
+                print "serviceview each:", each
                 if request.POST['pattern']:
                     part = ["ansible ", each["name"], " -m service -a ", '"', "name=", request.POST['name'], " pattern=", request.POST['pattern'], " state=", request.POST['action'], '"', " -u ", each["auth_user"]]
                     cmd = ''.join(part)
-                    print cmd
+                    print "serviceview cmd:", cmd
 		    run_cmd = commands.getoutput(cmd)
 		    result.append(str(run_cmd))
                 else:
                     part = ["ansible ", each["name"], " -m service -a ", '"', "name=", request.POST['name'], " state=", request.POST['action'], '"', " -u ", each["auth_user"]]
                     cmd = ''.join(part)
-                    print cmd
+                    print "serviceview cmd:", cmd
 		    run_cmd = commands.getoutput(cmd)
 		    result.append(str(run_cmd))
     return render(request, "service.html", {'result': result, 'groups': groups})
@@ -207,7 +230,7 @@ def runcmdview(request):
         group = request.POST['group']
         file = request.POST['file']
         file_dir = file.split("/")[-1].split(".")[0]   #jar包名目录,win下用\\表示目录级别，linux下用/表示。       
-        Task.objects.create(name=task, user=user)  #任务名写入数据库
+        Task.objects.create(name=task, user=user)  #任务名和执行用户写入数据库
         
         if request.user.is_superuser:
             queryset = Host.objects.filter(group=group).values('name','auth_user')   #超级用户列出所有host和auth_user
@@ -247,7 +270,7 @@ def getcmdview(request,task):
     print "getcmdview queryset:", queryset
     
     for each in queryset:
-	result.append(each['result'])
+        result.append(each['result'])
 	
     return HttpResponse(result)
 
@@ -278,9 +301,24 @@ def groupview(request):
 def delgroup(request):
     user = request.user.username
     if request.POST:
-        name = request.POST['name']
-        print "delgroup name:", name
-        Group.objects.filter(user=user).filter(name=name).delete()
+        name = request.POST['name'] #组名
+        if request.user.is_superuser:    #组中的主机
+            queryset = Host.objects.filter(group=name).values("name")
+        else:
+            queryset = Host.objects.filter(user=user).filter(group=name).values("name")
+        print "delgroup name:%s queryset:%s" % (name, queryset)
+        
+        if request.user.is_superuser:   #删除组
+            Group.objects.filter(name=name).delete()
+        else:
+            Group.objects.filter(user=user).filter(name=name).delete()
+            
+        for each in queryset:   #删除组中的主机
+            host = each["name"]
+            if request.user.is_superuser:
+                Host.objects.filter(group=name).filter(name=host).delete()
+            else:
+                Host.objects.filter(user=user).filter(group=name).filter(name=host).delete()
     return HttpResponseRedirect("/group/")
 
 #节点管理：host
@@ -296,7 +334,7 @@ def hostview(request):
     if request.POST:
         name = request.POST['name']
         group = request.POST['group']
-        print group
+        print "hostview group:", group
         auth_user = request.POST['auth_user']
         print "hostview name:%s group:%s auth_user:%s" %(name, group, auth_user)
         Host.objects.create(name=name, group=group, auth_user=auth_user, user=user)
@@ -306,7 +344,7 @@ def hostview(request):
     else:        
         hosts = Host.objects.filter(user=user)
     
-	print "hostview hosts", hosts
+	print "hostview hosts:", hosts
     return render(request, 'host.html', {'groups': groups, 'hosts': hosts})
 
 #删除主机
@@ -315,8 +353,13 @@ def delhost(request):
     user = request.user.username
     if request.POST:
         name = request.POST['name']
-        print name
-        Host.objects.filter(user=user).filter(name=name).delete()
+        group = request.POST['group']
+        auth_user = request.POST['auth_user']
+        print "delhost name:%s group:%s auth_user:%s" % (name, group, auth_user)
+        if request.user.is_superuser:
+            Host.objects.filter(group=group).filter(name=name).filter(auth_user=auth_user).delete()
+        else:
+            Host.objects.filter(user=user).filter(group=group).filter(name=name).filter(auth_user=auth_user).delete()
     return HttpResponseRedirect("/host/")
 
 #检查任务名称是否重复
@@ -349,7 +392,7 @@ def loginview(request):
             username = request.POST['user']
             password = request.POST['passw0rd']
             error = ''
-            print username, password
+            print "loginview username:%s password:%s" %(username, password)
             user = auth.authenticate(username=username, password=password)
             if user is not None and user.is_active:
                 login(request, user)

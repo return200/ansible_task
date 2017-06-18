@@ -308,14 +308,17 @@
 
 //删除主机
 	function delhost(that){
+ 		var auth_user=$(that).parent().prev().attr("id");
+		var group=$(that).parent().prev().prev().attr("id");
 		var name=$(that).parent().parent().attr("id");
+		console.log("auth_user:"+auth_user, "group:"+group, "name:"+name)
 		console.log(name)
 		var action=confirm("删除主机『 "+name+" 』？");
 		if(action==true){
 			$.ajax({
 				url: "/delhost/",
 				type: "post",
-				data: {"name":name},
+				data: {"name":name, "group":group, "auth_user":auth_user},
 				headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
 			});
 			$(that).parent().parent().remove();
