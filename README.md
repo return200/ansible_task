@@ -8,6 +8,14 @@ django 1.10.0
 django-formtools 2.0
 django-crispy-forms 1.6.1  
 ```
+2017-6-19  
+解决了result乱码问题
+```
+result = [], result.appand(run_cmd)
+改为：
+result = '', result+=run_cmd
+```
+
 2017-6-16  
 增加一键部署（result乱码问题待解决）  
 
