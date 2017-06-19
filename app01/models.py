@@ -37,7 +37,12 @@ class Host(models.Model):
 
 class Task(models.Model):
     name = models.CharField(max_length=50, blank=False, null=False, verbose_name=u'任务描述')
-    host = models.TextField(blank=False, null=False, verbose_name=u'任务主机')
+    group = models.CharField(max_length=50, blank=False, null=False, verbose_name=u'任务组别')
+    file = models.CharField(max_length=50, blank=False, null=False, verbose_name=u'项目文件')
+    # host = models.TextField(blank=False, null=False, verbose_name=u'任务主机')
+    task_status = models.CharField(max_length=50, blank=False, null=False, default=u"待部署", verbose_name=u'任务状态')
+    run_status = models.CharField(max_length=50, blank=False, null=False, default='info', verbose_name=u'任务状态')
+    button_status = models.CharField(max_length=8, verbose_name=u'按钮状态')
     result = models.TextField(blank=False, null=False, verbose_name=u'执行结果')
     user = models.CharField(max_length=20, blank=False, null=False, verbose_name=u'操作用户')
 

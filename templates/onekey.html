@@ -6,14 +6,12 @@
 {% block content %}
 <div class="margin">
 	<h4 style="font-weight:bold;">添加任务：</h4>
-<!-- 	<form enctype="multipart/form-data" action="#" method="post" > -->
-<!-- 	{% csrf_token %} -->
+    <form action="/onekey/" method="post" >    
+    {% csrf_token %}
 		任务描述:&nbsp;
 		<input type="text" id="task" name="task" onblur="chkduplicate()" required />
 		&nbsp;
-		<span id="chkduplicate" style="color:red; display:none">任务描述已存在</span>
 		
-		<br />
 		选择组别:&nbsp;
 		<select id="group" name="group" required>
 				<option></option>
@@ -21,17 +19,20 @@
 		  		<option value="{{ group }}">{{ group }}</option> 
 			{% endfor %}
 		</select>
+        &nbsp;
 	
-	<br />
-	项目文件:&nbsp;
-	<input type="text" id="file" name="file" placeholder="如 /mnt/upload/ROOT.war" required/>
+        项目文件:&nbsp;
+        <input type="text" id="file" name="file" placeholder="如 /mnt/upload/ROOT.war" required/>
 <!-- 	<input type="file" id="file" name="file" /> -->
 	
-	&nbsp;&nbsp;&nbsp;&nbsp;
-	<!-- <input type="reset" value="重置" /> -->
-	<!-- &nbsp;&nbsp;&nbsp;&nbsp; -->
-	<input id="submit" type="submit" onclick="return taskadd()" value="添加"/>
-<!-- 	</form> -->
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="reset" value="重置" />
+        &nbsp;
+        <input id="submit" type="submit" onclick="return taskadd()" value="添加"/>
+        
+        <br />
+        <span id="chkduplicate" style="color:red; display:none">任务描述已存在</span>
+	</form>
 
 </div>
 	<hr />
@@ -52,6 +53,19 @@
     </tr>
   </thead>
   <tbody id="add">
+    {% for each in queryset %}
+    <tr id="state" class="{{ each.run_status }}">
+      <td>
+      <button type="button" class="close" onclick="deltask(this)">×</button>
+      </td>
+      <td>{{ each.name }}</td>
+      <td>{{ each.group }}</td>
+      <td>{{ each.file }}</td>
+      <td>{{ each.task_status }}</td>
+      <td><a href="#myModal" class="btn-link" data-toggle="modal" onclick="return getcmd2(this)">查看</a></td>
+      <td><button class="chkrun" {{ each.button_status }} id="0" onclick="return runcmd2(this)">部署</button></td>
+    </tr>
+    {% endfor %}
   </tbody>
 </table>
 </div>

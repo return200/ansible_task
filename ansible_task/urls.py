@@ -40,4 +40,5 @@ urlpatterns = [
     url(r'^host/$', views.hostview),
     url(r'^delhost/$', views.delhost),
     url(r'^chkduplicate/$', views.chkduplicate),
+    url(r'^deltask/$', views.deltask),
 ]

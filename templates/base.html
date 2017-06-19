@@ -237,8 +237,58 @@
 			alert("请输入项目文件!")
 			return false;
 		}
+		<!-- else{ -->
+			<!-- $("#add").append('<tr id="state" class="active"><td><button type="button" class="close" onclick="javascript:$(this).parent().parent().remove()">×</button></td><td>'+task+'</td><td>'+group+'</td><td>'+file+'</td><td class="active" id="status">待部署</td><td><a href="#myModal" class="btn-link" data-toggle="modal" onclick="return getcmd()">查看</a></td><td><button class="chkrun" id="0" onclick="return runcmd()">部署</button></td></tr>') -->
+		<!-- } -->
+	}
+
+
+    function runcmd2(that){
+		var task=$(that).parent().prev().prev().prev().prev().prev().text()	//任务描述
+		var group=$(that).parent().prev().prev().prev().prev().text()	//任务组别
+		var file=$(that).parent().prev().prev().prev().text()	//项目文件
+		var id=$(that).attr("id")	//检查是否重复部署
+		console.log(task,group,file,id)
+// 		var status=document.getElementById("status").innerText
+// 		var url="/runcmd/"+"{{ request.user.username }}"+"/"
+// 		console.log(url)
+		//查询结果
+		
+		if(id=="0"){
+            var action=confirm("开始部署!")
+			if(action==true){
+				$(that).parent().prev().prev().text("部署中");	//更改部署状态
+				console.log($(that).text())
+                $(that).attr("disabled", true); //更改按钮状态
+                $(that).parent().parent().attr("class", "warning");	//更改部署状态对应的颜色
+                $.ajax({
+                    url: "/runcmd/",
+        //			url: url,
+                    type: "post",
+                    data: {"task":task, "group":group, "file":file},
+                    headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
+                    success: function(status){
+                        if(status=="ok"){
+                            console.log(status);
+                            $(that).parent().prev().prev().text("已部署");	//更改部署状态
+                            $(that).parent().parent().attr("class","success");  //部署成功后的颜色
+							alert("部署完成!");
+							$(that).attr("id","1");	//部署成功后状态改为1
+                        }
+                        else{
+                            alert("部署失败!");
+                            $(that).attr("disabled", false);
+                        }
+                    }
+                })
+            }
+            else{
+                alert("取消部署!");
+                $(that).attr("disabled",false);
+            }
+		}
 		else{
-			$("#add").append('<tr id="state" class="active"><td><button type="button" class="close" onclick="javascript:$(this).parent().parent().remove()">×</button></td><td>'+task+'</td><td>'+group+'</td><td>'+file+'</td><td class="active" id="status">待部署</td><td><a href="#myModal" class="btn-link" data-toggle="modal" onclick="return getcmd()">查看</a></td><td><button class="chkrun" id="0" onclick="return runcmd()">部署</button></td></tr>')
+			alert("请勿重复部署！")
 		}
 	}
 
@@ -289,6 +339,26 @@
 		}
 	}
 	
+    
+	function getcmd2(that){
+		var task=$(that).parent().prev().prev().prev().prev().text();	//任务描述
+		console.log(task);
+		var url="/getcmd/"+task+"/"
+		
+		document.getElementById("myModalLabel").innerText=task;
+		$.ajax({
+			url: url,
+			type: "post",
+			headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
+ 			success:function(result){
+				console.log(result);
+				document.getElementById("myModalBody").innerText=result;
+ 			}
+		});		
+	}
+    
+    
+    
 //获取命令执行结果
 	function getcmd(){
 		var task=document.getElementById("task").value;
@@ -368,6 +438,20 @@
 		}
 	}
 	
+    function deltask(that){
+		var name=$(that).parent().next().text();
+		console.log(name)
+// 		var action=confirm("删除组 ["+name+"] ？");
+// 		if(action==true){
+			$.ajax({
+				url: "/deltask/",
+				type: "post",
+				data: {"name":name},
+				headers:{ "X-CSRFtoken":$.cookie("csrftoken")},
+			});
+			$(that).parent().parent().remove();
+// 		}
+	}
     </script>
     <!-- END JAVASCRIPTS -->
 </body>

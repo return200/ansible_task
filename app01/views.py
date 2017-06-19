@@ -208,12 +208,18 @@ def serviceview(request):
 @login_required
 def onekeyview(request):
     user = request.user.username
-    
+
+    if request.POST:
+        if not Task.objects.filter(user=user).filter(name=request.POST['task']):
+            Task.objects.create(name=request.POST['task'], group=request.POST['group'], file=request.POST['file'], user=user)
+
     if request.user.is_superuser:
         groups = Group.objects.all()
+        queryset = Task.objects.all()
     else:
         groups = Group.objects.filter(user=user)
-    return render(request, "onekey.html", {'groups': groups})
+        queryset = Task.objects.filter(user=user)
+    return render(request, "onekey.html", {'groups': groups, 'queryset': queryset})
 
 #执行命令
 @login_required
@@ -230,12 +236,14 @@ def runcmdview(request):
         group = request.POST['group']
         file = request.POST['file']
         file_dir = file.split("/")[-1].split(".")[0]   #jar包名目录,win下用\\表示目录级别，linux下用/表示。       
-        Task.objects.create(name=task, user=user)  #任务名和执行用户写入数据库
+        # Task.objects.create(name=task, user=user)  #任务名和执行用户写入数据库
         
         if request.user.is_superuser:
             queryset = Host.objects.filter(group=group).values('name','auth_user')   #超级用户列出所有host和auth_user
+            Task.objects.filter(name=task).update(task_status=u"部署中", run_status="warning", button_status="disabled")
         else:
             queryset = Host.objects.filter(user=user).filter(group=group).values('name','auth_user')   #普通用户列出自己的host和auth_user
+            Task.objects.filter(user=user).filter(name=task).update(task_status=u"部署中", run_status="warning", button_status="disabled")
         print "runcmdview queryset:", queryset
         
         if not queryset:
@@ -257,7 +265,7 @@ def runcmdview(request):
                     result+=run_result
                 result+='\n\n'
                 print "runcmdview result:", result
-            Task.objects.filter(user=user).filter(name=task).update(host=host, result=result) #将主机和任务执行结果存入对应任务名称下
+            Task.objects.filter(user=user).filter(name=task).update(task_status=u"已部署", run_status="success", button_status="disabled", result=result) #将主机和任务执行结果存入对应任务名称下
 
     return HttpResponse(status)
 
@@ -283,8 +291,9 @@ def groupview(request):
     
     if request.POST:
         name = request.POST['name']
-        comment = request.POST['comment']
-        Group.objects.create(name=name, comment=comment, user=user)
+        if not Group.objects.filter(name=name).filter(user=user):
+            comment = request.POST['comment']
+            Group.objects.create(name=name, comment=comment, user=user)
     
     if request.user.is_superuser:
         groups = Group.objects.all()
@@ -337,7 +346,8 @@ def hostview(request):
         print "hostview group:", group
         auth_user = request.POST['auth_user']
         print "hostview name:%s group:%s auth_user:%s" %(name, group, auth_user)
-        Host.objects.create(name=name, group=group, auth_user=auth_user, user=user)
+        if not Host.objects.filter(user=user).filter(name=name).filter(group=group).filter(auth_user=auth_user):
+            Host.objects.create(name=name, group=group, auth_user=auth_user, user=user)
     
     if request.user.is_superuser:
         hosts = Host.objects.all()
@@ -372,7 +382,21 @@ def chkduplicate(request):
         status = "duplicate"
     else:
         status = "unique"
-    return HttpResponse(status)	
+    return HttpResponse(status)
+
+#删除任务
+@login_required
+def deltask(request):
+    user = request.user.username
+    
+    if request.POST:
+        name = request.POST['name']
+        print "deltask name:%s", name
+        if request.user.is_superuser:
+            Task.objects.filter(name=name).delete()
+        else:
+            Task.objects.filter(user=user).filter(name=name).delete()
+    return HttpResponseRedirect("/onekey/")
 
 #首页
 @login_required
