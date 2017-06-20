@@ -16,14 +16,23 @@
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
         
+<<<<<<< HEAD
 		服务名称:&nbsp;<input type="text" id="name" name="name" placeholder="">
+=======
+<<<<<<< HEAD
+		服务名称:&nbsp;<input type="text" id="name" name="name" placeholder="">
+=======
+		服务名称:&nbsp;
+		<input type="text" name="name" placeholder="">
+>>>>>>> linux
+>>>>>>> 3d5e076309a46e53e334565748d65f9046b381f7
         &nbsp;&nbsp;&nbsp;&nbsp;
         
 		<br/>
 		动作:&nbsp;
         <select name="action">
 			<option value="started">启动</option> 
-			<option value="stoped">停止</option> 
+			<option value="stopped">停止</option> 
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		
@@ -31,7 +40,11 @@
         <input type="text" name="pattern" placeholder="如：/usr/bin/java">
         &nbsp;&nbsp;&nbsp;&nbsp;
 		
+<<<<<<< HEAD
         <input type="submit" onclick="return isEmpty()" value="提交">
+=======
+        <input type="submit" onclick="return service()" value="提交">
+>>>>>>> 3d5e076309a46e53e334565748d65f9046b381f7
     </form>
 {% include 'result.html' %}
 </div>

@@ -83,8 +83,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ansible_task',
-        'USER': 'root',
-        'PASSWORD': '111',
+        'USER': 'ansible_user',
+        'PASSWORD': 'ansible-123',
         'HOST': 'localhost',
     }
 }

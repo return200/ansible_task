@@ -54,7 +54,14 @@
     <script src="/static/js/ui-modals.js"></script>
 </head>
 <!-- END HEAD -->
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+
+=======
+>>>>>>> linux
+>>>>>>> 3d5e076309a46e53e334565748d65f9046b381f7
 <!-- BEGIN BODY -->
 <style>
 .setbg input[type="text"],
@@ -203,7 +210,15 @@
         <!-- **** -->
     </div>
     <!-- END CONTAINER -->
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+	</div>
+     <script>
+=======
+>>>>>>> 3d5e076309a46e53e334565748d65f9046b381f7
     <script>
+>>>>>>> linux
     jQuery(document).ready(function() {
         App.init();
         UIModals.init();
@@ -240,6 +255,7 @@
 			b.removeAttribute("hidden", true);
 		}
 	}
+<<<<<<< HEAD
 	
 	//检查input是否为空：file copy shell service software crontab
 	function file(){
@@ -455,6 +471,60 @@
 				},
 			});
 		}
+=======
+
+//检查input是否为空：file copy shell service software crontab
+	function file(){
+		if (document.getElementById("dest").value==""){
+			alert("请输入目标对象！")
+			return false;
+		}
+		return true;
+	}
+
+	function copy(){
+		if (document.getElementById("file").value==""){
+			alert("请上传文件！")
+			return false;
+		}
+		if (document.getElementById("dest").value==""){
+			alert("请输入目标路径！")
+			return false;
+		}		
+		return true;
+	}
+	
+	function shell(){
+		if (document.getElementById("cmd").value==""){
+			alert("请输入命令内容！")
+			return false;
+		}
+		return true;
+	}
+
+	function service(){
+		if (document.getElementById("name").value==""){
+			alert("请输入服务名称！")
+			return false;
+		}
+		return true;
+	}
+
+	function software(){
+		if (document.getElementById("name").value==""){
+			alert("请输入软件名称！")
+			return false;
+		}
+		return true;
+	}
+
+	function crontab(){
+		if (document.getElementById("name").value==""){
+			alert("请输入任务名称！")
+			return false;
+		}
+		return true;
+>>>>>>> 3d5e076309a46e53e334565748d65f9046b381f7
 	}
     </script>
     
