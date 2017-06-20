@@ -1,0 +1,21 @@
+<script>
+function getSceneId(scece_name, td) {
+            var post_data = {
+                "name": scece_name,
+            };
+
+            $.ajax({
+                url: {% url 'scene_update_url' %},
+                type: "POST",
+                data: post_data,
+                success: function (data) {
+                    data = JSON.parse(data);
+                    if (data["status"] == 1) {
+                        setSceneTd(data["result"], scece_name, td);
+                    } else {
+                        alert(data["result"]);
+                    }
+                }
+            });
+        }
+</script>
