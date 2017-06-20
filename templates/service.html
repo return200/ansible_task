@@ -16,7 +16,7 @@
 		</select>
 		&nbsp;&nbsp;&nbsp;&nbsp;
         
-		服务名称:&nbsp;<input type="text" name="name" placeholder="">
+		服务名称:&nbsp;<input type="text" id="name" name="name" placeholder="">
         &nbsp;&nbsp;&nbsp;&nbsp;
         
 		<br/>
@@ -31,7 +31,7 @@
         <input type="text" name="pattern" placeholder="如：/usr/bin/java">
         &nbsp;&nbsp;&nbsp;&nbsp;
 		
-        <input type="submit" value="提交">
+        <input type="submit" onclick="return isEmpty()" value="提交">
     </form>
 {% include 'result.html' %}
 </div>

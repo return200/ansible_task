@@ -28,4 +28,16 @@ urlpatterns = [
     url(r'^software/$', views.softwareview),
     url(r'^service/$', views.serviceview),
     url(r'^crontab/$', views.crontabview),
+#    url(r'^onekey/$', views.onekeyview),
+#    url(r'^onekeyresult/$', views.onekey_resultview),
+    url(r'^onekey/$', views.onekeyview),
+#    url(r'^oneresult/$', views.oneresultview),
+    url(r'^runcmd/$', views.runcmdview),
+    url(r'^getcmd/(.*)/$', views.getcmdview, name="task"),
+    url(r'^group/$', views.groupview),
+    url(r'^delgroup/$', views.delgroup),
+    url(r'^host/$', views.hostview),
+    url(r'^delhost/$', views.delhost),
+    url(r'^chkduplicate/$', views.chkduplicate),
+
 ]

@@ -15,12 +15,12 @@
 	</select>
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	
-	文件:&nbsp;<input type="file" name="file" />
+	文件:&nbsp;<input type="file" id="file" name="file" />
 		
-	目标路径:&nbsp;<input type="text" name="dest">
+	目标路径:&nbsp;<input type="text" id="dest" name="dest">
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	
-	<input type="submit" value="提交"/>
+	<input type="submit" onclick="return isEmpty()" value="提交"/>
 </form>
 {% include 'result.html' %}
 </div>
