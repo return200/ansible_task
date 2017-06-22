@@ -8,6 +8,9 @@ django 1.10.0
 django-formtools 2.0
 django-crispy-forms 1.6.1  
 ```
+2016-6-22  
+调整了删除主机和组的逻辑  
+
 2016-6-21  
 添加登录功能， 
 修改权限，  
