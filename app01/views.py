@@ -7,6 +7,7 @@ import collections
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
+from other import hosts_file
 
 # Create your views here.
 
@@ -16,7 +17,17 @@ def fileview(request):
     cmd = ''
     result = []
     user = request.user.username
+    host_file = ''
     
+    if request.user.username == 'guanwang':
+        host_file = 'hosts_gw'
+    elif request.user.username == 'yhzx':
+        host_file = 'hosts_yhzx'
+    elif request.user.username == 'yyzx':
+        host_file = 'hosts_yyzx'
+    elif request.user.username == 'ddzx':
+        host_file = 'hosts_ddzx'
+        
     if request.user.is_superuser:
         groups = Group.objects.all()
     else:
@@ -35,19 +46,19 @@ def fileview(request):
             for each in queryset:
                 if request.POST['params']:
                     if request.POST['action']=="modify":
-                        part = ["ansible ", each["name"], " -m file -a ", '"', "dest=", request.POST['dest'], " ", request.POST['params'], '"', " -i /etc/ansible/hosts_gw", " -u ", each["auth_user"]]
+                        part = ["ansible ", each["name"], " -m file -a ", '"', "dest=", request.POST['dest'], " ", request.POST['params'], '"', " -i /etc/ansible/",host_file, " -u ", each["auth_user"]]
                         cmd = ''.join(part)
                         print "fileview cmd:", cmd
 			run_cmd = commands.getoutput(cmd)
                         result.append(str(run_cmd))
                     else:
-                        part = ["ansible ", each["name"], " -m file -a ", '"', "dest=", request.POST['dest'], " state=" , request.POST['action'], " ", request.POST['params'], '"', " -i /etc/ansible/hosts_gw", " -u ", each["auth_user"]]
+                        part = ["ansible ", each["name"], " -m file -a ", '"', "dest=", request.POST['dest'], " state=" , request.POST['action'], " ", request.POST['params'], '"', " -i /etc/ansible/", host_file, " -u ", each["auth_user"]]
                         cmd = ''.join(part)
                         print "fileview cmd:", cmd
 			run_cmd = commands.getoutput(cmd)
                         result.append(str(run_cmd))
                 else:
-                    part = ["ansible ", each["name"], " -m file -a ", '"', "dest=", request.POST['dest'], " state=" , request.POST['action'], '"', " -i /etc/ansible/hosts_gw -u ", each["auth_user"]]
+                    part = ["ansible ", each["name"], " -m file -a ", '"', "dest=", request.POST['dest'], " state=" , request.POST['action'], '"', " -i /etc/ansible/", host_file, " -u ", each["auth_user"]]
                     cmd = ''.join(part)
                     print "fileview cmd:", cmd
 		    run_cmd = commands.getoutput(cmd)
@@ -61,6 +72,17 @@ def copyview(request):
     result = []
     user = request.user.username
     
+    host_file = ''
+    
+    if request.user.username == 'guanwang':
+        host_file = 'hosts_gw'
+    elif request.user.username == 'yhzx':
+        host_file = 'hosts_yhzx'
+    elif request.user.username == 'yyzx':
+        host_file = 'hosts_yyzx'
+    elif request.user.username == 'ddzx':
+        host_file = 'hosts_ddzx'
+        
     if request.user.is_superuser:
         groups = Group.objects.all()
     else:
@@ -90,7 +112,7 @@ def copyview(request):
             return HttpResponse('no hosts found!')
         else:
             for each in queryset:
-                part = ["ansible ", each["name"], " -m copy -a ", '"', "src=", file_path, " dest=", request.POST['dest'], '"', " -i /etc/ansible/hosts_gw", " -u ", each["auth_user"]]
+                part = ["ansible ", each["name"], " -m copy -a ", '"', "src=", file_path, " dest=", request.POST['dest'], '"', " -i /etc/ansible/", host_file, " -u ", each["auth_user"]]
                 cmd = ''.join(part)
                 print "copyview cmd:",cmd
 		run_cmd = commands.getoutput(cmd)
@@ -103,6 +125,16 @@ def shellview(request):
     cmd = ''
     result = []
     user = request.user.username
+    host_file = ''
+    
+    if request.user.username == 'guanwang':
+        host_file = 'hosts_gw'
+    elif request.user.username == 'yhzx':
+        host_file = 'hosts_yhzx'
+    elif request.user.username == 'yyzx':
+        host_file = 'hosts_yyzx'
+    elif request.user.username == 'ddzx':
+        host_file = 'hosts_ddzx'
     
     if request.user.is_superuser:
         groups = Group.objects.all()
@@ -122,7 +154,7 @@ def shellview(request):
         else:
             for each in queryset:
                 print "shellview each:", each
-                part = ["ansible ", each["name"], " -m shell -a ", '"', request.POST['cmd'], '"', " -i /etc/ansible/hosts_gw", " -u ", each["auth_user"]]
+                part = ["ansible ", each["name"], " -m shell -a ", '"', request.POST['cmd'], '"', " -i /etc/ansible/", host_file, " -u ", each["auth_user"]]
                 cmd = ''.join(part)
                 print "shellview cmd:", cmd
 		run_cmd = commands.getoutput(cmd)
@@ -135,7 +167,17 @@ def softwareview(request):
     cmd = ''
     result = []
     user = request.user.username
+    host_file = ''
     
+    if request.user.username == 'guanwang':
+        host_file = 'hosts_gw'
+    elif request.user.username == 'yhzx':
+        host_file = 'hosts_yhzx'
+    elif request.user.username == 'yyzx':
+        host_file = 'hosts_yyzx'
+    elif request.user.username == 'ddzx':
+        host_file = 'hosts_ddzx'
+        
     if request.user.is_superuser:
         groups = Group.objects.all()
     else:
@@ -158,7 +200,7 @@ def softwareview(request):
                 print "softwareview each:", each
                 for every in software.split(','):
                     print every.strip()
-                    part = ["ansible ", each["name"], " -m ", request.POST['method'], " -a ", '"', "name=", every.strip(), " state=", request.POST['action'], '"', " -i /etc/ansible/hosts_gw", " -u ", each["auth_user"]]
+                    part = ["ansible ", each["name"], " -m ", request.POST['method'], " -a ", '"', "name=", every.strip(), " state=", request.POST['action'], '"', " -i /etc/ansible/", host_file, " -u ", each["auth_user"]]
                     cmd = ''.join(part)
                     print "softwareview cmd:", cmd
 		    run_cmd = commands.getoutput(cmd)
@@ -171,6 +213,16 @@ def serviceview(request):
     cmd = ''
     result = []
     user = request.user.username
+    host_file = ''
+    
+    if request.user.username == 'guanwang':
+        host_file = 'hosts_gw'
+    elif request.user.username == 'yhzx':
+        host_file = 'hosts_yhzx'
+    elif request.user.username == 'yyzx':
+        host_file = 'hosts_yyzx'
+    elif request.user.username == 'ddzx':
+        host_file = 'hosts_ddzx'    
     
     if request.user.is_superuser:
         groups = Group.objects.all()
@@ -191,13 +243,13 @@ def serviceview(request):
             for each in queryset:
                 print "serviceview each:", each
                 if request.POST['pattern']:
-                    part = ["ansible ", each["name"], " -m service -a ", '"', "name=", request.POST['name'], " pattern=", request.POST['pattern'], " state=", request.POST['action'], '"', " -i /etc/ansible/hosts_gw", " -u ", each["auth_user"]]
+                    part = ["ansible ", each["name"], " -m service -a ", '"', "name=", request.POST['name'], " pattern=", request.POST['pattern'], " state=", request.POST['action'], '"', " -i /etc/ansible/", host_file, " -u ", each["auth_user"]]
                     cmd = ''.join(part)
                     print "serviceview cmd:", cmd
 		    run_cmd = commands.getoutput(cmd)
 		    result.append(str(run_cmd))
                 else:
-                    part = ["ansible ", each["name"], " -m service -a ", '"', "name=", request.POST['name'], " state=", request.POST['action'], '"', " -i /etc/ansible/hosts_gw", " -u ", each["auth_user"]]
+                    part = ["ansible ", each["name"], " -m service -a ", '"', "name=", request.POST['name'], " state=", request.POST['action'], '"', " -i /etc/ansible/", host_file, " -u ", each["auth_user"]]
                     cmd = ''.join(part)
                     print "serviceview cmd:", cmd
 		    run_cmd = commands.getoutput(cmd)
@@ -230,7 +282,7 @@ def runcmdview(request):
     host = ''
     status = "ok"
     user = request.user.username
-
+    
     if request.POST:
         task = request.POST['task']
         group = request.POST['group']
@@ -258,27 +310,30 @@ def runcmdview(request):
                     cmds[u'\n\n[ 备份项目目录 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"cp -r /mnt/tomcat/webapps/"+file_dir+" /mnt/tomcat/backup/"+file_dir+"-"+date+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
                     cmds[u'\n\n[ 删除项目目录 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+" state=absent"+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
                     cmds[u'\n\n[ 分发 jar 包 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src=/mnt/upload"+file+" dest=/mnt/tomcat/webapps/"+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
-                    cmds[u'\n\n[ 解压 jar 包 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"unzip /mnt/tomcat/webapps/"+file_dir+".war -d /mnt/tomcat/webapps/"+file_dir+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
+                    cmds[u'\n\n[ 解压 jar 包 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"unzip -q /mnt/tomcat/webapps/"+file_dir+".war -d /mnt/tomcat/webapps/"+file_dir+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
                     cmds[u'\n\n[ 删除 jar 包 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+".war"+" state=absent"+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
                     cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m service -a "+'"'+"name=tomcat state=started"+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
                 elif request.user.username == 'yhzx':   #用户中心
                     cmds[u'\n[ 分发项目文件 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src=/mnt/upload"+file+"/"+" dest=/mnt/tomcat/webapps/"+file_dir+'"'+" -i /etc/ansible/hosts_yhzx -u "+each['auth_user']
                     cmds[u'\n\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps -ef |grep org.apache.catalina.startup.Bootstrap |grep -v grep |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -i /etc/ansible/hosts_yhzx -u "+each['auth_user']    
-                    cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"/mnt/tomcat/bin/startup.sh"+'"'+" -i /etc/ansible/hosts_yhzx -u "+each['auth_user']
+                    #cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"/mnt/tomcat/bin/startup.sh"+'"'+" -i /etc/ansible/hosts_yhzx -u "+each['auth_user']
+                    cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ssh "+each['auth_user']+"@"+each['name']+" -C "+'"'+"source /etc/profile;/mnt/tomcat/bin/startup.sh"+'"'
                 elif request.user.username == 'yyzx':   #运营中心
-                    cmds[u'\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"/mnt/tomcat/bin/shutdown.sh"+'"'+" -i /etc/ansible/hosts_yyzx -u "+each['auth_user']
+                    #cmds[u'\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"/mnt/tomcat/bin/shutdown.sh"+'"'+" -i /etc/ansible/hosts_yyzx -u "+each['auth_user']
+                    cmds[u'\n[ 停止 tomcat 服务 ]'] = "ssh "+each['auth_user']+"@"+each['name']+" -C "+'"'+"source /etc/profile;/mnt/tomcat/bin/shutdown.sh"+'"'
                     cmds[u'\n\n[ 备份项目文件 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"cp /mnt/tomcat/webapps/"+file_dir+".war /mnt/tomcat/backup/"+file_dir+".war-"+date+'"'+" -i /etc/ansible/hosts_yyzx -u "+each['auth_user']
                     cmds[u'\n\n[ 备份项目目录 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"cp -r /mnt/tomcat/webapps/"+file_dir+" /mnt/tomcat/backup/"+file_dir+"-"+date+'"'+" -i /etc/ansible/hosts_yyzx -u "+each['auth_user']
                     cmds[u'\n\n[ 删除项目文件 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+".war state=absent"+'"'+" -i /etc/ansible/hosts_yyzx -u "+each['auth_user']
                     cmds[u'\n\n[ 删除项目目录 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+" state=absent"+'"'+" -i /etc/ansible/hosts_yyzx -u "+each['auth_user']
                     cmds[u'\n\n[ 分发 jar 包 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src=/mnt/upload"+file+" dest=/mnt/tomcat/webapps/"+'"'+" -i /etc/ansible/hosts_yyzx -u "+each['auth_user']
-                    cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"/mnt/tomcat/bin/startup.sh"+'"'+" -i /etc/ansible/hosts_yyzx -u "+each['auth_user']
+                    #cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"/mnt/tomcat/bin/startup.sh"+'"'+" -i /etc/ansible/hosts_yyzx -u "+each['auth_user']
+                    cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ssh "+each['auth_user']+"@"+each['name']+" -C "+'"'+"source /etc/profile;/mnt/tomcat/bin/startup.sh"+'"'
                 elif request.user.username == 'spzx':   #商品中心
                     cmds[u'\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps -ef |grep org.apache.catalina.startup.Bootstrap |grep -v grep |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
                     cmds[u'\n\n[ 备份项目目录 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"cp -r /mnt/tomcat/webapps/"+file_dir+" /mnt/tomcat/backup/"+file_dir+"-"+date+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
                     cmds[u'\n\n[ 删除项目目录 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+" state=absent"+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
                     cmds[u'\n\n[ 分发 jar 包 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src=/mnt/upload"+file+" dest=/mnt/tomcat/webapps/"+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
-                    cmds[u'\n\n[ 解压 jar 包 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"unzip /mnt/tomcat/webapps/"+file_dir+".war -d /mnt/tomcat/webapps/"+file_dir+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
+                    cmds[u'\n\n[ 解压 jar 包 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"unzip -q /mnt/tomcat/webapps/"+file_dir+".war -d /mnt/tomcat/webapps/"+file_dir+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
                     cmds[u'\n\n[ 删除 jar 包 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+".war"+" state=absent"+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
                     cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m service -a "+'"'+"name=tomcat state=started"+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
                 
@@ -325,7 +380,7 @@ def groupview(request):
         groups = Group.objects.filter(user=user)
 
     print "groupview groups:", groups
-    print "groupview dir(request.user):", dir(request.user)
+#   print "groupview dir(request.user):", dir(request.user)
 	
     return render(request, 'group.html', {'groups': groups})
 
@@ -378,7 +433,8 @@ def hostview(request):
     else:        
         hosts = Host.objects.filter(user=user)
     
-	print "hostview hosts:", hosts
+#    hosts_file.create_file(request)
+    print "hostview hosts:", hosts
     return render(request, 'host.html', {'groups': groups, 'hosts': hosts})
 
 #删除主机

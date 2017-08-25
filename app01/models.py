@@ -21,6 +21,7 @@ class Group(models.Model):
     class Meta:
         verbose_name = '分组管理'
         verbose_name_plural = '分组管理'
+	ordering = ['name']
 
 class Host(models.Model):
     name = models.GenericIPAddressField(max_length=255, blank=False, null=False, verbose_name=u'主机地址')
@@ -34,6 +35,7 @@ class Host(models.Model):
     class Meta:
         verbose_name = '主机管理'
         verbose_name_plural = '主机管理'
+	ordering = ['group']
 
 class Task(models.Model):
     name = models.CharField(max_length=50, blank=False, null=False, verbose_name=u'任务描述')
@@ -52,5 +54,6 @@ class Task(models.Model):
     class Meta:
         verbose_name = '任务管理'
         verbose_name_plural = '任务管理'
+	ordering = ['group']
 #class Copy(models.Model):
 #    file = models.FileField(upload_to='file')
