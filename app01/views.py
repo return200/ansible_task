@@ -22,7 +22,7 @@ def fileview(request):
     host_file = ''
     
     if request.user.username == 'guanwang':
-        host_file = 'hosts_gw'
+        host_file = 'hosts_guanwang'
     elif request.user.username == 'yhzx':
         host_file = 'hosts_yhzx'
     elif request.user.username == 'yyzx':
@@ -77,7 +77,7 @@ def copyview(request):
     host_file = ''
     
     if request.user.username == 'guanwang':
-        host_file = 'hosts_gw'
+        host_file = 'hosts_guanwang'
     elif request.user.username == 'yhzx':
         host_file = 'hosts_yhzx'
     elif request.user.username == 'yyzx':
@@ -130,7 +130,7 @@ def shellview(request):
     host_file = ''
     
     if request.user.username == 'guanwang':
-        host_file = 'hosts_gw'
+        host_file = 'hosts_guanwang'
     elif request.user.username == 'yhzx':
         host_file = 'hosts_yhzx'
     elif request.user.username == 'yyzx':
@@ -172,7 +172,7 @@ def softwareview(request):
     host_file = ''
     
     if request.user.username == 'guanwang':
-        host_file = 'hosts_gw'
+        host_file = 'hosts_guanwang'
     elif request.user.username == 'yhzx':
         host_file = 'hosts_yhzx'
     elif request.user.username == 'yyzx':
@@ -218,7 +218,7 @@ def serviceview(request):
     host_file = ''
     
     if request.user.username == 'guanwang':
-        host_file = 'hosts_gw'
+        host_file = 'hosts_guanwang'
     elif request.user.username == 'yhzx':
         host_file = 'hosts_yhzx'
     elif request.user.username == 'yyzx':
@@ -308,13 +308,13 @@ def runcmdview(request):
                 host = host+each['name']+" "
                 cmds = collections.OrderedDict()
                 if request.user.username == 'guanwang': #官网
-                    cmds[u'\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps -ef |grep /usr/local/java/jre/bin/java |grep -v grep |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
-                    cmds[u'\n\n[ 备份项目目录 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"cp -r /mnt/tomcat/webapps/"+file_dir+" /mnt/tomcat/backup/"+file_dir+"-"+date+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
-                    cmds[u'\n\n[ 删除项目目录 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+" state=absent"+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
-                    cmds[u'\n\n[ 分发 jar 包 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src=/mnt/upload"+file+" dest=/mnt/tomcat/webapps/"+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
-                    cmds[u'\n\n[ 解压 jar 包 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"unzip -q /mnt/tomcat/webapps/"+file_dir+".war -d /mnt/tomcat/webapps/"+file_dir+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
-                    cmds[u'\n\n[ 删除 jar 包 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+".war"+" state=absent"+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
-                    cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m service -a "+'"'+"name=tomcat state=started"+'"'+" -i /etc/ansible/hosts_gw -u "+each['auth_user']
+                    cmds[u'\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps -ef |grep /usr/local/java/jre/bin/java |grep -v grep |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
+                    cmds[u'\n\n[ 备份项目目录 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"cp -r /mnt/tomcat/webapps/"+file_dir+" /mnt/tomcat/backup/"+file_dir+"-"+date+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
+                    cmds[u'\n\n[ 删除项目目录 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+" state=absent"+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
+                    cmds[u'\n\n[ 分发 jar 包 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src=/mnt/upload"+file+" dest=/mnt/tomcat/webapps/"+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
+                    cmds[u'\n\n[ 解压 jar 包 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"unzip -q /mnt/tomcat/webapps/"+file_dir+".war -d /mnt/tomcat/webapps/"+file_dir+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
+                    cmds[u'\n\n[ 删除 jar 包 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+".war"+" state=absent"+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
+                    cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m service -a "+'"'+"name=tomcat state=started"+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
                 elif request.user.username == 'yhzx':   #用户中心
                     cmds[u'\n[ 分发项目文件 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src=/mnt/upload"+file+"/"+" dest=/mnt/tomcat/webapps/"+file_dir+'"'+" -i /etc/ansible/hosts_yhzx -u "+each['auth_user']
                     cmds[u'\n\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps -ef |grep org.apache.catalina.startup.Bootstrap |grep -v grep |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -i /etc/ansible/hosts_yhzx -u "+each['auth_user']    
