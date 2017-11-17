@@ -6,6 +6,7 @@
 {% block content %}
 <div class="margin">
 	<h4 style="font-weight:bold;">添加任务：</h4>
+    <strong style="color:red">* jar包名称需要与解压后的目录名称相同（区分大小写），如 ROOT.war 解压后的目录名称必须为 ROOT。</strong>
     <form action="/onekey/" method="post" >    
     {% csrf_token %}
 		任务描述:&nbsp;

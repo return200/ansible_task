@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 import commands, os, sys, time
+import collections
+
 from django.shortcuts import render, render_to_response, redirect
 from django.http.response import HttpResponse, HttpResponseRedirect
-from app01.models import Group, Host, Task
-import collections
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.contrib.auth import authenticate, login, logout
-from other import hosts_file
+
+from app01.models import Group, Host, Task
+from other import hosts_file, hosts_ssh
 
 # Create your views here.
 
@@ -336,6 +338,14 @@ def runcmdview(request):
                     cmds[u'\n\n[ 解压 jar 包 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"unzip -q /mnt/tomcat/webapps/"+file_dir+".war -d /mnt/tomcat/webapps/"+file_dir+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
                     cmds[u'\n\n[ 删除 jar 包 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+".war"+" state=absent"+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
                     cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m service -a "+'"'+"name=tomcat state=started"+'"'+" -i /etc/ansible/hosts_spzx -u "+each['auth_user']
+                elif request.user.username == 'ddzx':   #订单中心
+                    cmds[u'\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps -ef |grep org.apache.catalina.startup.Bootstrap |grep -v grep |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -i /etc/ansible/hosts_ddzx -u "+each['auth_user']
+                    cmds[u'\n\n[ 备份项目目录 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"cp -r /mnt/tomcat/webapps/"+file_dir+" /mnt/tomcat/guoyao-data/"+file_dir+"-"+date+'"'+" -i /etc/ansible/hosts_ddzx -u "+each['auth_user']
+                    cmds[u'\n\n[ 删除项目目录 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+" state=absent"+'"'+" -i /etc/ansible/hosts_ddzx -u "+each['auth_user']
+                    cmds[u'\n\n[ 分发 jar 包 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src=/mnt/upload"+file+" dest=/mnt/tomcat/webapps/"+'"'+" -i /etc/ansible/hosts_ddzx -u "+each['auth_user']
+                    cmds[u'\n\n[ 解压 jar 包 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"unzip -q /mnt/tomcat/webapps/"+file_dir+".war -d /mnt/tomcat/webapps/"+file_dir+'"'+" -i /etc/ansible/hosts_ddzx -u "+each['auth_user']
+                    cmds[u'\n\n[ 删除 jar 包 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+".war"+" state=absent"+'"'+" -i /etc/ansible/hosts_ddzx -u "+each['auth_user']
+                    cmds[u'\n\n[ 启动 tomcat 服务 ]'] = "ansible "+each['name']+" -m service -a "+'"'+"name=tomcat state=started"+'"'+" -i /etc/ansible/hosts_ddzx -u "+each['auth_user']            
                 
                 for cmd in cmds:
                     print "runcmdview cmd:%s ### cmds[cmd]:%s" % (cmd, cmds[cmd])   #cmd:步骤名称，cmds[cmd]:命令内容
@@ -407,12 +417,17 @@ def delgroup(request):
                 Host.objects.filter(group=name).filter(name=host).delete()
             else:
                 Host.objects.filter(user=user).filter(group=name).filter(name=host).delete()
+        hosts_file.create_file(request)
     return HttpResponseRedirect("/group/")
 
 #节点管理：host
 @login_required
 def hostview(request):
     user = request.user.username
+    info = ''
+    flag = 0
+    
+    hosts_file.create_file(request)
     
     if request.user.is_superuser:
         groups = Group.objects.all()
@@ -425,17 +440,22 @@ def hostview(request):
         print "hostview group:", group
         auth_user = request.POST['auth_user']
         print "hostview name:%s group:%s auth_user:%s" %(name, group, auth_user)
-        if not Host.objects.filter(user=user).filter(name=name).filter(group=group).filter(auth_user=auth_user):
-            Host.objects.create(name=name, group=group, auth_user=auth_user, user=user)
-    
+        
+        info = hosts_ssh.do_ssh(request)
+        if info == 'Success':        
+            if not Host.objects.filter(user=user).filter(name=name).filter(group=group).filter(auth_user=auth_user):
+                Host.objects.create(name=name, group=group, auth_user=auth_user, user=user)
+            flag = 1
     if request.user.is_superuser:
         hosts = Host.objects.all()
     else:        
         hosts = Host.objects.filter(user=user)
+    if flag == 1:
+        hosts_file.create_file(request)
     
-#    hosts_file.create_file(request)
+    print "hostview info:", info
     print "hostview hosts:", hosts
-    return render(request, 'host.html', {'groups': groups, 'hosts': hosts})
+    return render(request, 'host.html', {'groups': groups, 'hosts': hosts, 'info':info})
 
 #删除主机
 @login_required
@@ -450,6 +470,7 @@ def delhost(request):
             Host.objects.filter(group=group).filter(name=name).filter(auth_user=auth_user).delete()
         else:
             Host.objects.filter(user=user).filter(group=group).filter(name=name).filter(auth_user=auth_user).delete()
+        hosts_file.create_file(request)
     return HttpResponseRedirect("/host/")
 
 #检查任务名称是否重复
