@@ -308,7 +308,8 @@ def runcmdview(request):
                 host = host+each['name']+" "
                 cmds = collections.OrderedDict()
                 if request.user.username == 'guanwang': #官网
-                    cmds[u'\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps -ef |grep /usr/local/java/jre/bin/java |grep -v grep |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
+                    # cmds[u'\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps -ef |grep /usr/local/java/jre/bin/java |grep -v grep |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
+					cmds[u'\n[ 停止 tomcat 服务 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"ps -ef |grep tomcat |grep -v grep |awk "+"'"+"{print \$2}"+"'"+" |xargs kill -9"+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
                     cmds[u'\n\n[ 备份项目目录 ]'] = "ansible "+each['name']+" -m shell -a "+'"'+"cp -r /mnt/tomcat/webapps/"+file_dir+" /mnt/tomcat/backup/"+file_dir+"-"+date+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
                     cmds[u'\n\n[ 删除项目目录 ]'] = "ansible "+each['name']+" -m file -a "+'"'+"dest=/mnt/tomcat/webapps/"+file_dir+" state=absent"+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
                     cmds[u'\n\n[ 分发 jar 包 ]'] = "ansible "+each['name']+" -m copy -a "+'"'+"src=/mnt/upload"+file+" dest=/mnt/tomcat/webapps/"+'"'+" -i /etc/ansible/hosts_guanwang -u "+each['auth_user']
